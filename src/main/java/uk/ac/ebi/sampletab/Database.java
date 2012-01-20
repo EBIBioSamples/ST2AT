@@ -2,66 +2,56 @@ package uk.ac.ebi.sampletab;
 
 import com.pri.util.StringUtils;
 
-public class Database implements Comparable<Database>
-{
- private String id;
- private String name;
- private String uri;
+public class Database implements Comparable<Database> {
+    private String id;
+    private String name;
+    private String uri;
 
- public String getId()
- {
-  return id;
- }
+    public String getId() {
+        return id;
+    }
 
- public void setId(String id)
- {
-  this.id = id;
- }
+    public void setId(String id) {
+        this.id = id;
+    }
 
- public String getName()
- {
-  return name;
- }
+    public String getName() {
+        return name;
+    }
 
- public void setName(String name)
- {
-  this.name = name;
- }
+    public void setName(String name) {
+        this.name = name;
+    }
 
- public String getUri()
- {
-  return uri;
- }
+    public String getUri() {
+        return uri;
+    }
 
- public void setUri(String uri)
- {
-  this.uri = uri;
- }
+    public void setUri(String uri) {
+        this.uri = uri;
+    }
 
+    @Override
+    public int compareTo(Database o) {
+        int res = StringUtils.compareStrings(name, o.getName());
 
- @Override
- public int compareTo(Database o)
- {
-  int res = StringUtils.compareStrings(name, o.getName());
-    
-  if( res != 0 )
-   return res;
- 
-  res = StringUtils.compareStrings(id, o.getId() );
-  
-  if( res != 0 )
-   return res;
+        if (res != 0)
+            return res;
 
-  res = StringUtils.compareStrings(uri, o.getUri());
-  
-  if( res != 0 )
-   return res;
+        res = StringUtils.compareStrings(id, o.getId());
 
-  return 0;
- }
+        if (res != 0)
+            return res;
 
- public boolean equals( Object o )
- {
-  return compareTo( (Database)o ) == 0;
- }
+        res = StringUtils.compareStrings(uri, o.getUri());
+
+        if (res != 0)
+            return res;
+
+        return 0;
+    }
+
+    public boolean equals(Object o) {
+        return compareTo((Database) o) == 0;
+    }
 }

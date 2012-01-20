@@ -11,515 +11,447 @@ import java.util.regex.Pattern;
 
 import com.pri.util.StringUtils;
 
-public class ATWriter
-{
- public static final int MAX_INLINE_REPEATS=3;
- 
- public static final char TAB = '\t';
- 
- private static Pattern attrPattern = Pattern.compile("^\\s*(\\S+)\\s*\\[\\s*(.+)\\s*\\]\\s*");
- 
- private static String cellText( String str )
- {
-  String clt = StringUtils.escapeBy(str, '"', '"');
-  
-  if( clt != str )
-   return "\""+clt+"\"";
-  
-  return str;
- }
- 
- public static void writeAgeTab(Submission sub, OutputStream outStream) throws IOException
- {
-  PrintStream out = new PrintStream(outStream, false, "UTF-8");
+public class ATWriter {
+    public static final int MAX_INLINE_REPEATS = 3;
 
-//  out.print('|');
-  
-  out.print( Definitions.SUBMISSION );
-  out.print( TAB );
-  out.print( cellText(sub.getID() ) );
-  
-  for( Attribute attr : sub.getAnnotations() )
-  {
-   String atName = attr.getName();
-   
-//   if( atName.startsWith(Definitions.SUBMISSION) )
-//    atName = atName.substring(Definitions.SUBMISSION.length()+1);
+    public static final char TAB = '\t';
 
-   out.println();
-   out.print( cellText( atName ) );
-   out.print( TAB );
-   out.print( cellText( attr.getID() ) );
-  }
+    private static Pattern attrPattern = Pattern.compile("^\\s*(\\S+)\\s*\\[\\s*(.+)\\s*\\]\\s*");
 
-  for( String atCl : sub.getAttachedClasses() )
-  {
-   List<WellDefinedObject> objs = sub.getAttachedObjects(atCl);
-   
-   if( objs==null || objs.size() == 0 )
-    continue;
-   
-   out.println();
-   
-   if( atCl.endsWith("s") || atCl.endsWith("x") )
-    atCl+="es";
-   else
-    atCl+="s";
-    
-   out.print( cellText(atCl ) );
-   
-   for( WellDefinedObject obj : objs )
-   {
-    out.print( TAB );
-    out.print( cellText( obj.getID() ) );
-   }
-   
-  }
+    private static String cellText(String str) {
+        String clt = StringUtils.escapeBy(str, '"', '"');
 
+        if (clt != str)
+            return "\"" + clt + "\"";
 
-  for( String atCl : sub.getAttachedClasses() )
-  {
-   List<WellDefinedObject> objs = sub.getAttachedObjects(atCl);
-   
-   if( objs.size() == 0 )
-    continue;
-   
-   out.println();
-   out.println();
-//   out.print('|');
-   out.print( cellText( atCl ) );
-
-   for( WellDefinedObject obj : objs )
-   {
-    out.print( TAB );
-    out.print( cellText( obj.getID() ) );
-   }
-
- 
-   
-   for( String fld : Definitions.object2Properties.get(atCl) )
-   {
-    boolean has = false;
-    
-    for( WellDefinedObject obj : objs )
-    {
-     if( obj.getAnnotation(fld) != null )
-     {
-      has = true;
-      break;
-     }
-    }
-    
-    if( has )
-    {
-     out.println();
-
-//     if( fld.startsWith(atCl) )
-//      out.print(fld.substring(atCl.length()+1) );
-//     else
-     
-     out.print( cellText( fld ) );
-
-     for( WellDefinedObject obj : objs )
-     {
-      out.print( TAB );
-      
-      Attribute attr = obj.getAnnotation(fld);
-      
-      out.print( attr == null?"": cellText( attr.getID() ) );
-     }
-     
-    }
-   }
-   
-  }
-  
-  for( Group grp : sub.getGroups() )
-  {
-   out.println();
-   out.println();
-//   out.print('|');
-   out.print(Definitions.GROUP);
-   out.print(TAB);
-   out.print( cellText( grp.getID() ) );
-   
-   for( Attribute attr : grp.getAnnotations() )
-   {
-    String attrName = attr.getName();
-    
-//    if( attrName.startsWith(Definitions.SUBMISSION) )
-//     attrName = attrName.substring(Definitions.SUBMISSION.length()+1);
-    
-    out.println();
-    out.print( cellText( attrName ) );
-    
-    if( attr.getValuesNumber() == 1 )
-    {
-     out.print(TAB);
-     out.print( cellText( attr.getID() ) );
-    }
-    else
-    {
-     for( Attribute valAt : attr.getValues() )
-     {
-      out.print(TAB);
-      out.print( cellText( valAt.getID() ) );
-     }
-     
-    }
-   }
-   
-   for( String atOCls : grp.getAttachedClasses() )
-   {
-    List<WellDefinedObject> objs = grp.getAttachedObjects( atOCls );
-
-    if( atOCls.endsWith("s") || atOCls.endsWith("x") )
-     atOCls+="es";
-    else
-     atOCls+="s";
-    
-    out.println();
-    out.print( cellText( atOCls ) );
-
-    for( WellDefinedObject o : objs )
-    {
-     out.print(TAB);
-     out.print( cellText( o.getID() ) );
-    }
-    
-   }
-   
-  }
-  
-  List<ValueExtractor> extrs = new ArrayList<ValueExtractor>();
-
-  for( List<Sample> sBlock : sub.getSampleBlocks() )
-  {
-//   List<Attribute> protoAttrMap = new LinkedList<Attribute>();
-//   List<Group> protoGrpMap = new LinkedList<Group>();
-//   List<Sample> protoDervMap = new LinkedList<Sample>();
-   Sample proto = null;
-   extrs.clear();
-   
-   if( sBlock.size() > 1 )
-   {
-
-    proto = new Sample();
-    proto.setID(Definitions.PROTOTYPEID);
-
-    Sample s0 = sBlock.get(0);
-
-    for(Attribute at : s0.getAnnotations())
-     proto.addAnnotation(at);
-
-    if(s0.getGroups() != null)
-    {
-     for(Group g : s0.getGroups())
-      proto.addGroup(g);
+        return str;
     }
 
-    if(s0.getDeriverFromSamples() != null)
-    {
-     for(Sample s : s0.getDeriverFromSamples())
-      proto.addDerivedFrom(s);
-    }
+    public static void writeAgeTab(Submission sub, OutputStream outStream) throws IOException {
+        PrintStream out = new PrintStream(outStream, false, "UTF-8");
 
-    for(int i = 1; i < sBlock.size(); i++)
-    {
-     Sample s = sBlock.get(i);
+        // out.print('|');
 
-     Iterator<Attribute> attIter = proto.getAnnotations().iterator();
+        out.print(Definitions.SUBMISSION);
+        out.print(TAB);
+        out.print(cellText(sub.getID()));
 
-     while(attIter.hasNext())
-     {
-      Attribute at = attIter.next();
-      Attribute chkat = s.getAnnotation(at.getName());
+        for (Attribute attr : sub.getAnnotations()) {
+            String atName = attr.getName();
 
-      if(chkat == null || !at.equals(chkat))
-       attIter.remove();
-     }
+            // if( atName.startsWith(Definitions.SUBMISSION) )
+            // atName = atName.substring(Definitions.SUBMISSION.length()+1);
 
-     if(s.getGroups() == null)
-      proto.getGroups().clear();
-     else
-     {
-      Iterator< ? extends Group> grpIter = proto.getGroups().iterator();
-
-      while(grpIter.hasNext())
-      {
-       Group g = grpIter.next();
-
-       boolean found = false;
-
-       for(Group sg : s.getGroups())
-       {
-        if(sg.getID().equals(g.getID()))
-        {
-         found = true;
-         break;
+            out.println();
+            out.print(cellText(atName));
+            out.print(TAB);
+            out.print(cellText(attr.getID()));
         }
-       }
 
-       if(!found)
-        grpIter.remove();
-      }
-     }
+        for (String atCl : sub.getAttachedClasses()) {
+            List<WellDefinedObject> objs = sub.getAttachedObjects(atCl);
 
-     if(s.getDeriverFromSamples() == null)
-      proto.getDeriverFromSamples().clear();
-     else
-     {
-      Iterator< ? extends Sample> drvIter = proto.getDeriverFromSamples().iterator();
+            if (objs == null || objs.size() == 0)
+                continue;
 
-      while(drvIter.hasNext())
-      {
-       Sample dfs = drvIter.next();
+            out.println();
 
-       boolean found = false;
+            if (atCl.endsWith("s") || atCl.endsWith("x"))
+                atCl += "es";
+            else
+                atCl += "s";
 
-       for(Sample sdfs : s.getDeriverFromSamples())
-       {
-        if(sdfs.getID().equals(dfs.getID()))
-        {
-         found = true;
-         break;
+            out.print(cellText(atCl));
+
+            for (WellDefinedObject obj : objs) {
+                out.print(TAB);
+                out.print(cellText(obj.getID()));
+            }
+
         }
-       }
 
-       if(!found)
-        drvIter.remove();
-      }
-     }
+        for (String atCl : sub.getAttachedClasses()) {
+            List<WellDefinedObject> objs = sub.getAttachedObjects(atCl);
+
+            if (objs.size() == 0)
+                continue;
+
+            out.println();
+            out.println();
+            // out.print('|');
+            out.print(cellText(atCl));
+
+            for (WellDefinedObject obj : objs) {
+                out.print(TAB);
+                out.print(cellText(obj.getID()));
+            }
+
+            for (String fld : Definitions.object2Properties.get(atCl)) {
+                boolean has = false;
+
+                for (WellDefinedObject obj : objs) {
+                    if (obj.getAnnotation(fld) != null) {
+                        has = true;
+                        break;
+                    }
+                }
+
+                if (has) {
+                    out.println();
+
+                    // if( fld.startsWith(atCl) )
+                    // out.print(fld.substring(atCl.length()+1) );
+                    // else
+
+                    out.print(cellText(fld));
+
+                    for (WellDefinedObject obj : objs) {
+                        out.print(TAB);
+
+                        Attribute attr = obj.getAnnotation(fld);
+
+                        out.print(attr == null ? "" : cellText(attr.getID()));
+                    }
+
+                }
+            }
+
+        }
+
+        for (Group grp : sub.getGroups()) {
+            out.println();
+            out.println();
+            // out.print('|');
+            out.print(Definitions.GROUP);
+            out.print(TAB);
+            out.print(cellText(grp.getID()));
+
+            for (Attribute attr : grp.getAnnotations()) {
+                String attrName = attr.getName();
+
+                // if( attrName.startsWith(Definitions.SUBMISSION) )
+                // attrName = attrName.substring(Definitions.SUBMISSION.length()+1);
+
+                out.println();
+                out.print(cellText(attrName));
+
+                if (attr.getValuesNumber() == 1) {
+                    out.print(TAB);
+                    out.print(cellText(attr.getID()));
+                } else {
+                    for (Attribute valAt : attr.getValues()) {
+                        out.print(TAB);
+                        out.print(cellText(valAt.getID()));
+                    }
+
+                }
+            }
+
+            for (String atOCls : grp.getAttachedClasses()) {
+                List<WellDefinedObject> objs = grp.getAttachedObjects(atOCls);
+
+                if (atOCls.endsWith("s") || atOCls.endsWith("x"))
+                    atOCls += "es";
+                else
+                    atOCls += "s";
+
+                out.println();
+                out.print(cellText(atOCls));
+
+                for (WellDefinedObject o : objs) {
+                    out.print(TAB);
+                    out.print(cellText(o.getID()));
+                }
+
+            }
+
+        }
+
+        List<ValueExtractor> extrs = new ArrayList<ValueExtractor>();
+
+        for (List<Sample> sBlock : sub.getSampleBlocks()) {
+            // List<Attribute> protoAttrMap = new LinkedList<Attribute>();
+            // List<Group> protoGrpMap = new LinkedList<Group>();
+            // List<Sample> protoDervMap = new LinkedList<Sample>();
+            Sample proto = null;
+            extrs.clear();
+
+            if (sBlock.size() > 1) {
+
+                proto = new Sample();
+                proto.setID(Definitions.PROTOTYPEID);
+
+                Sample s0 = sBlock.get(0);
+
+                for (Attribute at : s0.getAnnotations())
+                    proto.addAnnotation(at);
+
+                if (s0.getGroups() != null) {
+                    for (Group g : s0.getGroups())
+                        proto.addGroup(g);
+                }
+
+                if (s0.getDeriverFromSamples() != null) {
+                    for (Sample s : s0.getDeriverFromSamples())
+                        proto.addDerivedFrom(s);
+                }
+
+                for (int i = 1; i < sBlock.size(); i++) {
+                    Sample s = sBlock.get(i);
+
+                    Iterator<Attribute> attIter = proto.getAnnotations().iterator();
+
+                    while (attIter.hasNext()) {
+                        Attribute at = attIter.next();
+                        Attribute chkat = s.getAnnotation(at.getName());
+
+                        if (chkat == null || !at.equals(chkat))
+                            attIter.remove();
+                    }
+
+                    if (s.getGroups() == null)
+                        proto.getGroups().clear();
+                    else {
+                        Iterator<? extends Group> grpIter = proto.getGroups().iterator();
+
+                        while (grpIter.hasNext()) {
+                            Group g = grpIter.next();
+
+                            boolean found = false;
+
+                            for (Group sg : s.getGroups()) {
+                                if (sg.getID().equals(g.getID())) {
+                                    found = true;
+                                    break;
+                                }
+                            }
+
+                            if (!found)
+                                grpIter.remove();
+                        }
+                    }
+
+                    if (s.getDeriverFromSamples() == null)
+                        proto.getDeriverFromSamples().clear();
+                    else {
+                        Iterator<? extends Sample> drvIter = proto.getDeriverFromSamples().iterator();
+
+                        while (drvIter.hasNext()) {
+                            Sample dfs = drvIter.next();
+
+                            boolean found = false;
+
+                            for (Sample sdfs : s.getDeriverFromSamples()) {
+                                if (sdfs.getID().equals(dfs.getID())) {
+                                    found = true;
+                                    break;
+                                }
+                            }
+
+                            if (!found)
+                                drvIter.remove();
+                        }
+                    }
+
+                }
+
+                if (proto.getAnnotations().size() > 0) {
+                    AttributeInfo sampleInf = new AttributeInfo(null);
+
+                    collectAttributesInfo(proto, sampleInf);
+
+                    for (AttributeInfo ati : sampleInf.getQualifiers())
+                        createAttributeExtractor(ati, extrs, null);
+                }
+
+                for (int k = 0; k < proto.getDeriverFromSamples().size(); k++)
+                    extrs.add(new DerivedFromRelationExtractor(Definitions.DERIVEDFROM, null, k));
+
+                for (int k = 0; k < proto.getGroups().size(); k++)
+                    extrs.add(new GroupRelationExtractor(Definitions.BELONGSTO, null, k));
+
+                if (extrs.size() > 0) {
+                    out.println();
+                    writeHeader(extrs, out);
+                    writeSample(proto, extrs, out);
+                }
+
+                extrs.clear();
+            }
+
+            AttributeInfo sampleAttrInfo = new AttributeInfo(null);
+            int nGrp = 0, nDFSamples = 0;
+
+            for (Sample s : sBlock) {
+                collectAttributesInfo(s, sampleAttrInfo);
+
+                if (proto != null) {
+                    int n = 0;
+
+                    for (Group sg : s.getGroups()) {
+                        if (proto.getGroup(sg.getID()) == null)
+                            n++;
+                    }
+
+                    if (n > nGrp)
+                        nGrp = n;
+
+                    n = 0;
+
+                    for (Sample dfs : s.getDeriverFromSamples()) {
+                        if (proto.getDeriverFromSample(dfs.getID()) == null)
+                            n++;
+                    }
+
+                    if (n > nDFSamples)
+                        nDFSamples = n;
+                } else {
+                    if (s.getGroups().size() > nGrp)
+                        nGrp = s.getGroups().size();
+
+                    if (s.getDeriverFromSamples().size() > nDFSamples)
+                        nDFSamples = s.getDeriverFromSamples().size();
+                }
+            }
+
+            if (sampleAttrInfo.getQualifiers() != null) {
+                for (AttributeInfo sAttr : sampleAttrInfo.getQualifiers()) {
+                    if (proto == null || proto.getAnnotation(sAttr.getName()) == null)
+                        createAttributeExtractor(sAttr, extrs, null);
+                }
+            }
+
+            for (int k = 0; k < nDFSamples; k++)
+                extrs.add(new DerivedFromRelationExtractor(Definitions.DERIVEDFROM, proto != null ? proto
+                        .getDeriverFromSamples() : null, k));
+
+            for (int k = 0; k < nGrp; k++)
+                extrs.add(new GroupRelationExtractor(Definitions.BELONGSTO, proto != null ? proto.getGroups() : null, k));
+
+            out.println();
+            writeHeader(extrs, out);
+
+            for (Sample s : sBlock)
+                writeSample(s, extrs, out);
+
+        }
+
+        out.flush();
+    }
+
+    private static void writeHeader(List<ValueExtractor> extrs, PrintStream out) {
+        out.println();
+        out.print(Definitions.SAMPLE);
+
+        for (ValueExtractor extr : extrs) {
+            out.print(TAB);
+            out.print(cellText(extr.getHeader()));
+        }
+    }
+
+    private static void writeSample(Sample sample, List<ValueExtractor> extrs, PrintStream out) {
+        out.println();
+        out.print(cellText(sample.getID()));
+
+        // if( sample.getID().equals("SAME074631") )
+        // {
+        // out = System.out;
+        // System.out.println("'"+sample.getID()+"'");
+        // }
+
+        for (ValueExtractor ve : extrs)
+            ve.setSample(sample);
+
+        boolean finished = true;
+        boolean firstLine = true;
+
+        do {
+            finished = true;
+
+            if (!firstLine) {
+                out.println();
+                // out.print(TAB);
+            } else
+                firstLine = false;
+
+            for (ValueExtractor ve : extrs) {
+                out.print(TAB);
+                out.print(cellText(ve.extract()));
+
+                if (ve.hasValue())
+                    finished = false;
+            }
+        } while (!finished);
 
     }
 
+    private static List<ValueExtractor> createAttributeExtractor(AttributeInfo attr, List<ValueExtractor> resExtr,
+            String hostTitle) {
+        if (resExtr == null)
+            resExtr = new ArrayList<ValueExtractor>();
 
-    if(proto.getAnnotations().size() > 0)
-    {
-     AttributeInfo sampleInf = new AttributeInfo(null);
+        if (attr.getValuesNumber() <= MAX_INLINE_REPEATS && attr.getQualifiersNumber() == 0 && hostTitle == null) {
+            for (int i = 0; i < attr.getValuesNumber(); i++)
+                resExtr.add(new SimpleAttributeExtractor(attr.getName(), ageAttributeName(attr.getName()), i));
+        } else {
+            QualifiedAttributeExtractor hostExtr = null;
 
-     collectAttributesInfo(proto, sampleInf);
+            String title = null;
 
-     for(AttributeInfo ati : sampleInf.getQualifiers())
-      createAttributeExtractor(ati, extrs, null);
+            if (hostTitle != null)
+                hostExtr = new QualifierExtractor(attr.getName(), title = hostTitle + Definitions.QUALIFIERBRACKETS[0]
+                        + attr.getName() + Definitions.QUALIFIERBRACKETS[1]);
+            else
+                hostExtr = new QualifiedAttributeExtractor(attr.getName(), title = ageAttributeName(attr.getName()));
+
+            resExtr.add(hostExtr);
+
+            if (attr.getQualifiersNumber() > 0) {
+                for (AttributeInfo q : attr.getQualifiers()) {
+                    int sz = resExtr.size();
+
+                    createAttributeExtractor(q, resExtr, title);
+
+                    hostExtr.addQualifierExtractor((QualifierExtractor) resExtr.get(sz));
+                }
+            }
+
+        }
+
+        return resExtr;
     }
 
-    for(int k = 0; k < proto.getDeriverFromSamples().size(); k++)
-     extrs.add(new DerivedFromRelationExtractor(Definitions.DERIVEDFROM, null, k));
+    private static void collectAttributesInfo(AnnotatedObject s, AttributeInfo parentAttrInfo) {
+        if (s.getAnnotations() == null)
+            return;
 
-    for(int k = 0; k < proto.getGroups().size(); k++)
-     extrs.add(new GroupRelationExtractor(Definitions.BELONGSTO, null, k));
+        for (Attribute a : s.getAnnotations()) {
+            AttributeInfo atInf = parentAttrInfo.getInfo(a.getName());
 
-    if(extrs.size() > 0)
-    {
-     out.println();
-     writeHeader(extrs, out);
-     writeSample(proto, extrs, out);
+            if (atInf == null) {
+                atInf = new AttributeInfo(a.getName());
+
+                atInf.setValuesNumber(a.getValuesNumber());
+
+                parentAttrInfo.addAttributeInfo(atInf);
+            } else {
+                if (a.getValuesNumber() > atInf.getValuesNumber())
+                    atInf.setValuesNumber(a.getValuesNumber());
+            }
+
+            collectAttributesInfo(a, atInf);
+        }
+
     }
 
-    extrs.clear();
-   }
-   
-   AttributeInfo sampleAttrInfo = new AttributeInfo( null );
-   int nGrp=0, nDFSamples=0;
+    private static String ageAttributeName(String name) {
+        Matcher mtch = attrPattern.matcher(name);
 
-   for( Sample s : sBlock )
-   {
-    collectAttributesInfo(s, sampleAttrInfo);
+        if (mtch.matches())
+            return mtch.group(1) + Definitions.CUSTIOMCLASSBRACKETS[0] + mtch.group(2)
+                    + Definitions.CUSTIOMCLASSBRACKETS[1];
 
-    if(proto != null)
-    {
-     int n = 0;
-
-     for(Group sg : s.getGroups())
-     {
-      if(proto.getGroup(sg.getID()) == null)
-       n++;
-     }
-
-     if(n > nGrp)
-      nGrp = n;
-
-     n = 0;
-
-     for(Sample dfs : s.getDeriverFromSamples())
-     {
-      if(proto.getDeriverFromSample(dfs.getID()) == null)
-       n++;
-     }
-
-     if(n > nDFSamples)
-      nDFSamples = n;
+        return Definitions.CUSTIOMCLASSBRACKETS[0] + name + Definitions.CUSTIOMCLASSBRACKETS[1];
     }
-    else
-    {
-     if(s.getGroups().size() > nGrp)
-      nGrp = s.getGroups().size();
 
-     if(s.getDeriverFromSamples().size() > nDFSamples)
-      nDFSamples = s.getDeriverFromSamples().size();
-    }
-   }
-   
-   
-   
-   if( sampleAttrInfo.getQualifiers() != null )
-   {
-    for( AttributeInfo sAttr : sampleAttrInfo.getQualifiers() )
-    {
-     if( proto == null || proto.getAnnotation(sAttr.getName()) == null )
-      createAttributeExtractor(sAttr, extrs, null);
-    }
-   }
-   
-   for( int k=0; k < nDFSamples; k++ )
-    extrs.add( new DerivedFromRelationExtractor( Definitions.DERIVEDFROM , proto!=null?proto.getDeriverFromSamples():null, k) );
-   
-   for( int k=0; k < nGrp; k++ )
-    extrs.add( new GroupRelationExtractor( Definitions.BELONGSTO , proto!=null?proto.getGroups():null, k) );
-  
-   out.println();
-   writeHeader(extrs, out);
-
-   for( Sample s : sBlock )
-    writeSample( s, extrs, out );
-
-  
-  }
-  
-  out.flush();
- }
-
- private static void writeHeader(List<ValueExtractor> extrs, PrintStream out)
- {
-  out.println();
-  out.print(Definitions.SAMPLE);
-
-  for( ValueExtractor extr : extrs )
-  {
-   out.print(TAB);
-   out.print( cellText( extr.getHeader() ) );
-  }
- }
- 
- private static void writeSample(Sample sample, List<ValueExtractor> extrs, PrintStream out)
- {
-  out.println();
-  out.print( cellText( sample.getID() ) );
-  
-//  if( sample.getID().equals("SAME074631") )
-//  {
-//   out = System.out;
-//   System.out.println("'"+sample.getID()+"'");
-//  }
-
-  for( ValueExtractor ve : extrs )
-   ve.setSample(sample);
-  
-  boolean finished = true;
-  boolean firstLine = true;
-  
-  do
-  {
-   finished = true;
-   
-   if( ! firstLine )
-   {
-    out.println();
-//    out.print(TAB);
-   }
-   else
-    firstLine = false;
-   
-   for( ValueExtractor ve : extrs )
-   {
-    out.print(TAB);
-    out.print( cellText( ve.extract() ) );
-
-    if( ve.hasValue() )
-     finished = false;
-   }
-  }
-  while( ! finished );
-  
- }
-
- private static List<ValueExtractor> createAttributeExtractor( AttributeInfo attr, List<ValueExtractor> resExtr, String hostTitle )
- {
-  if( resExtr == null )
-   resExtr = new ArrayList<ValueExtractor>();
-  
-  if( attr.getValuesNumber() <= MAX_INLINE_REPEATS && attr.getQualifiersNumber() == 0 && hostTitle == null )
-  {
-   for( int i=0; i < attr.getValuesNumber(); i++ )
-    resExtr.add( new SimpleAttributeExtractor(attr.getName(), ageAttributeName(attr.getName()), i) );
-  }
-  else
-  {
-   QualifiedAttributeExtractor hostExtr = null;
-   
-   String title = null;
-   
-   if( hostTitle != null )
-    hostExtr = new QualifierExtractor( attr.getName(), title = hostTitle+Definitions.QUALIFIERBRACKETS[0]+attr.getName()+Definitions.QUALIFIERBRACKETS[1] );
-   else 
-    hostExtr = new QualifiedAttributeExtractor( attr.getName(), title = ageAttributeName(attr.getName()) );
-   
-   resExtr.add( hostExtr );
-  
-   if( attr.getQualifiersNumber() > 0 )
-   {
-    for( AttributeInfo q : attr.getQualifiers() )
-    {
-     int sz = resExtr.size();
-     
-     createAttributeExtractor(q, resExtr, title);
-     
-     hostExtr.addQualifierExtractor( (QualifierExtractor)resExtr.get(sz) );
-    }
-   }
-   
-  }
-  
-  return resExtr;
- }
- 
- private static void collectAttributesInfo(AnnotatedObject s, AttributeInfo parentAttrInfo )
- {
-  if( s.getAnnotations() == null )
-   return;
-  
-  for( Attribute a : s.getAnnotations() )
-  {
-   AttributeInfo atInf = parentAttrInfo.getInfo( a.getName() );
-   
-   if( atInf == null )
-   {
-    atInf = new AttributeInfo( a.getName() );
-    
-    atInf.setValuesNumber( a.getValuesNumber() );
-    
-    parentAttrInfo.addAttributeInfo( atInf );
-   }
-   else
-   {
-    if( a.getValuesNumber() > atInf.getValuesNumber() )
-     atInf.setValuesNumber( a.getValuesNumber() );
-   }
-
-   collectAttributesInfo(a, atInf);
-  }
-  
- }
-
- private static String ageAttributeName( String name )
- {
-  Matcher mtch = attrPattern.matcher(name);
-  
-  if( mtch.matches() )
-   return mtch.group(1)+Definitions.CUSTIOMCLASSBRACKETS[0]+mtch.group(2)+Definitions.CUSTIOMCLASSBRACKETS[1];
-  
-  return Definitions.CUSTIOMCLASSBRACKETS[0]+name+Definitions.CUSTIOMCLASSBRACKETS[1];
- }
- 
 }

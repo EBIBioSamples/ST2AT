@@ -5,64 +5,54 @@ import java.util.List;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 
-public class STConverterOptions
-{
- @Option( name = "-r", usage="Process recursively")
- private boolean recursive;
- 
- @Argument
- private List<String> dirs;
- 
- @Option( name = "-u", usage="Update files")
- private boolean update;
+public class STConverterOptions {
+    @Option(name = "-r", usage = "Process recursively")
+    private boolean recursive;
 
- @Option( name = "-o", usage="Output directory. (Default is the same as input)")
- private String outDir;
+    @Argument
+    private List<String> dirs;
 
- @Option( name = "-s", usage="SampleTab file name. (Default is "+STConverter.SAMPLETAB+")")
- private String stFileName;
+    @Option(name = "-u", usage = "Update files")
+    private boolean update;
 
- @Option( name = "-l", usage="Log file", metaVar="LOGFILE")
- private String logFileName;
+    @Option(name = "-o", usage = "Output directory. (Default is the same as input)")
+    private String outDir;
 
- @Option( name = "-f", usage="Fail log file", metaVar="LOGFILE")
- private String failedFileName;
+    @Option(name = "-s", usage = "SampleTab file name. (Default is " + STConverter.SAMPLETAB + ")")
+    private String stFileName;
 
- 
- public List<String> getDirs()
- {
-  return dirs;
- }
+    @Option(name = "-l", usage = "Log file", metaVar = "LOGFILE")
+    private String logFileName;
 
- public boolean isUpdate()
- {
-  return update;
- }
+    @Option(name = "-f", usage = "Fail log file", metaVar = "LOGFILE")
+    private String failedFileName;
 
- public boolean isRecursive()
- {
-  return recursive;
- }
+    public List<String> getDirs() {
+        return dirs;
+    }
 
- public String getStFileName()
- {
-  return stFileName!=null?stFileName:STConverter.SAMPLETAB;
- }
+    public boolean isUpdate() {
+        return update;
+    }
 
- public String getLogFileName()
- {
-  return logFileName;
- }
+    public boolean isRecursive() {
+        return recursive;
+    }
 
- public String getFailedFileName()
- {
-  return failedFileName;
- }
+    public String getStFileName() {
+        return stFileName != null ? stFileName : STConverter.SAMPLETAB;
+    }
 
- public String getOutputDir()
- {
-  return outDir;
- }
+    public String getLogFileName() {
+        return logFileName;
+    }
 
+    public String getFailedFileName() {
+        return failedFileName;
+    }
+
+    public String getOutputDir() {
+        return outDir;
+    }
 
 }
