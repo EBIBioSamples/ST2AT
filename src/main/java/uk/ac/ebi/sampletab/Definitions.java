@@ -48,7 +48,7 @@ public class Definitions {
 
     public static final String PERSON = "Person";
     public static final String PERSONLASTNAME = "Person Last Name";
-    public static final String PERSONMIDINIT = "Person Mid Initials";
+    public static final String PERSONMIDINIT = "Person Initials";
     public static final String PERSONFIRSTNAME = "Person First Name";
     public static final String PERSONEMAIL = "Person Email";
     public static final String PERSONROLE = "Person Role";
@@ -59,7 +59,7 @@ public class Definitions {
     public static final String SUBMISSIONVERSION = "Submission Version";
     public static final String SUBMISSIONABSTRACT = "Submission Abstract";
     public static final String SUBMISSIONRELEASEDATE = "Submission Release Date";
-    public static final String SUBMISSIONMODIFICATIONDATE = "Submission Modification Date";
+    public static final String SUBMISSIONMODIFICATIONDATE = "Submission Update Date";
     public static final String SUBMISSIONIDENTIFIER = "Submission Identifier";
     public static final String SUBMISSIONREFERENCELAYER = "Submission Reference Layer";
 
