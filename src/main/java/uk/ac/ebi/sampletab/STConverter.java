@@ -7,8 +7,10 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
@@ -152,7 +154,9 @@ public class STConverter {
         }
 
         if (!options.isRecursive()) {
-            for (String outf : options.getDirs()) {
+            List<String> subdirs = options.getDirs();
+            Collections.sort(subdirs);
+            for (String outf : subdirs) {
                 File in = new File(outf);
 
                 if (!in.exists()) {
