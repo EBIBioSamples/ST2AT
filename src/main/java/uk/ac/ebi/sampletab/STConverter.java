@@ -1,8 +1,10 @@
 package uk.ac.ebi.sampletab;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.text.DateFormat;
@@ -356,7 +358,7 @@ public class STConverter {
                     log.write("Converting to AGE-TAB" + dirName);
                     time = System.currentTimeMillis();
 
-                    FileOutputStream fos = new FileOutputStream(ageFile);
+                    OutputStream fos = new BufferedOutputStream(new FileOutputStream(ageFile));
 
                     ATWriter.writeAgeTab(s, fos);
 
