@@ -90,7 +90,7 @@ public class STParser4 {
             if (!sampleSection) {
                 if (Definitions.submissionProperties.containsKey(p0)) {
                     if (parts.size() != 2)
-                        throw new STParseException("Invalid number of values for tag: '" + p0 + "' Expected: 1");
+                        throw new STParseException("Invalid number of values for tag: '" + p0 + "' Expected: 1 Got: "+parts.size());
 
                     sub.addAnnotation(new Attribute(p0, parts.get(1), lineNum));
 
