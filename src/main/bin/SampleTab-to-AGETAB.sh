@@ -29,3 +29,5 @@ done
 classpath="$jars:$base/config";
 
 $java $args -classpath $classpath uk.ac.ebi.sampletab.STConverter $@
+
+exit
