@@ -51,12 +51,14 @@ public class STConverter {
             System.err.println(e.getMessage());
             System.err.println(usage);
             parser.printUsage(System.err);
+            System.exit(1);
             return;
         }
 
         if (options.getDirs() == null || options.getDirs().size() == 0) {
             System.err.println(usage);
             parser.printUsage(System.err);
+            System.exit(1);
             return;
         }
 
@@ -95,6 +97,7 @@ public class STConverter {
             if (options.getDirs().size() != 1) {
                 System.err.println("Only one input directory is allowed if output directory specified");
                 System.exit(1);
+                return;
             }
 
             outDir = new File(options.getOutputDir());
@@ -102,11 +105,13 @@ public class STConverter {
             if (outDir.isFile()) {
                 System.err.println("Output path should point to some directory");
                 System.exit(1);
+                return;
             }
 
             if (!outDir.exists() && !outDir.mkdirs()) {
                 System.err.println("Can't create output direcory");
                 System.exit(1);
+                return;
             }
         }
         // else
@@ -142,6 +147,7 @@ public class STConverter {
                 log = new PrintStreamLog(System.err, true);
         } catch (IOException e1) {
             System.err.println("Can't create log file: " + options.getLogFileName());
+            System.exit(1);
             return;
         }
 
@@ -152,6 +158,7 @@ public class STConverter {
                 failedLog = new NullLog();
         } catch (IOException e1) {
             System.err.println("Can't create failed log file: " + options.getFailedFileName());
+            System.exit(1);
             return;
         }
 
@@ -163,10 +170,8 @@ public class STConverter {
 
                 if (!in.exists()) {
                     System.err.println("Input file/directory '" + outf + "' doesn't exist");
-                    System.exit(1);
                 } else if (in.isDirectory()) {
                     System.err.println("'" + outf + "' is a directory");
-                    System.exit(1);
                 }
 
                 InputFiles inp = new InputFiles();
@@ -179,6 +184,7 @@ public class STConverter {
 
             if (infiles.size() == 0) {
                 System.err.println("No files to process");
+                System.exit(1);
                 return;
             }
 
