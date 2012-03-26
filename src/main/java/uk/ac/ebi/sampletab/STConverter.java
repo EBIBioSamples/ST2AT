@@ -194,7 +194,6 @@ public class STConverter {
 
             new ConverterTask(outDir != null ? new File(options.getDirs().get(0)) : null, outDir, "Main", log,
                     failedLog).run();
-            return;
         } else {
             int nTheads = Runtime.getRuntime().availableProcessors();
 
