@@ -28,6 +28,8 @@ import org.kohsuke.args4j.CmdLineParser;
 
 public class STConverter {
     static final String SAMPLETAB = "sampletab.toload.txt";
+    
+    static int exitcode = 0;
 
     static class InputFiles {
         File dir;
@@ -217,6 +219,7 @@ public class STConverter {
 
         log.shutdown();
         failedLog.shutdown();
+        System.exit(exitcode);
     }
 
     static class InputCollectionTask implements Runnable {
@@ -278,7 +281,6 @@ public class STConverter {
             Thread.currentThread().setName(threadName);
 
             InputFiles f;
-
             while (true) {
                 try {
                     f = infiles.take();
@@ -328,7 +330,8 @@ public class STConverter {
 
                     if (!subOutDir.isDirectory() && !subOutDir.mkdirs()) {
                         log.write("ERROR: Can't create output directory: " + subOutDir.getAbsolutePath() + dirName);
-                        System.exit(1);
+                        exitcode = 1;
+                        return;
                     }
 
                     File ageFile = new File(subOutDir, f.dir.getName() + ".age.txt");
@@ -348,6 +351,7 @@ public class STConverter {
 
                         log.write("ERROR: File parsing error: " + e.getMessage() + dirName);
                         log.printStackTrace(e);
+                        exitcode = 1;
                         continue;
                     }
 
@@ -356,6 +360,7 @@ public class STConverter {
                     if (sbmId == null) {
                         log.write("ERROR: Can't retrieve submission identifier" + dirName);
                         failedLog.write(f.dir.getAbsolutePath());
+                        exitcode = 1;
                         continue;
                     }
 
@@ -416,12 +421,12 @@ public class STConverter {
                 } catch (IOException e) {
                     log.write("ERROR: IOException. " + e.getMessage() + dirName);
                     failedLog.write(f.sampletab.getAbsolutePath());
-
+                    exitcode = 1;
                     log.printStackTrace(e);
                 } catch (Exception e) {
                     log.write("ERROR: Unknown Exception. " + e.getClass().getName() + " " + e.getMessage() + dirName);
                     failedLog.write(f.sampletab.getAbsolutePath());
-
+                    exitcode = 1;
                     log.printStackTrace(e);
                 }
             }
