@@ -404,9 +404,5 @@ public class STParser4 {
         ts.setID(attr.getID());
 
         attr = ts.getAnnotation(Definitions.TERMSOURCEURI);
-
-        if (attr == null || attr.getID().length() == 0)
-            throw new STParseException("Term Source has no URI");
-
     }
 }
