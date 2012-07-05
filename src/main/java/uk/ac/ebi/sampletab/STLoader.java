@@ -264,7 +264,7 @@ public class STLoader {
                             sts = Status.UPDATEORNEW;
 
                         reqEntity
-                                .addPart(Constants.uploadHandlerParameter, new StringBody(Constants.SUBMISSON_COMMAND));
+                                .addPart(Constants.serviceHandlerParameter, new StringBody(Constants.SUBMISSON_COMMAND));
                         reqEntity.addPart(SubmissionConstants.SUBMISSON_KEY, new StringBody(key));
                         reqEntity.addPart(SubmissionConstants.SUBMISSON_STATUS, new StringBody(sts.name()));
 
